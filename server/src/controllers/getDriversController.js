@@ -3,10 +3,8 @@ require('dotenv').config();
 const { API_URL, DEFAULT_IMAGE } = process.env;
 const { Driver, Team } = require('../db.js');
 
-
-const getDrivers = async () => {
-
-  const apiDrivers = []; // ----> lo tenía como let y cambié a const.
+const getAPIdrivers = async () => {
+  const apiDrivers = []; 
 
   const apiRequest = axios.get(API_URL);
   const responses = await Promise.all([apiRequest]);
@@ -23,12 +21,16 @@ const getDrivers = async () => {
         image: driver.image.url ? driver.image.url : DEFAULT_IMAGE,
         dob: driver.dob,
         nationality: driver.nationality,
+        teams: driver.teams,
         description: driver.description,
       };
     });
     apiDrivers.push(...drivers);
   }
+  return apiDrivers;
+};
 
+const getDBdrivers = async () => {
   const dbDrivers = await Driver.findAll({
     include: {
       model: Team,
@@ -38,9 +40,17 @@ const getDrivers = async () => {
       },
     },
   });
+  return dbDrivers;
+};
+
+const getDrivers = async () => {
+  const apiDrivers = await getAPIdrivers();
+  const dbDrivers = await getDBdrivers();
+
   const allDrivers = apiDrivers.concat(dbDrivers);
   return allDrivers;
 //   filter logic here
+
 };
 
-module.exports = { getDrivers };
+module.exports = { getDrivers, getAPIdrivers, getDBdrivers };

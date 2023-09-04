@@ -36,8 +36,17 @@ const { Driver, Team } = sequelize.models;
 // Aca vendrian las relaciones
 // Product.hasMany(Reviews);
 
-Driver.belongsToMany(Team, {through: 'driver_team'});
-Team.belongsToMany(Driver, {through: 'driver_team'});
+Driver.belongsToMany(Team, {through: 'Driver_Team'});
+Team.belongsToMany(Driver, {through: 'Driver_Team'});
+
+// sequelize.sync({ force: false }) // Cambiar a true si deseo que se eliminen y vuelvan a crear las tablas
+//   .then(() => {
+//     console.log('Database synchronized');
+//   })
+//   .catch((err) => {
+//     console.error('Error syncing database:', err);
+//   });
+
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');

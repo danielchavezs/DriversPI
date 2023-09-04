@@ -7,19 +7,19 @@ module.exports = (sequelize) => {
     id:{
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      initialValue: 1000,
+      initialValue: 1001,
       unique: true,
       allowNull: false,
       primaryKey: true
     },
     forename: {
       type: DataTypes.STRING,
-      unique: true,
+      unique: false,
       allowNull: false,
     },
     surname: {
         type: DataTypes.STRING,
-        unique: true,
+        unique: false,
         allowNull: false,
     },
     description: {
@@ -31,7 +31,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     nationality: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     dob: {
@@ -43,4 +43,6 @@ module.exports = (sequelize) => {
     timestamps: false,
   }
   );
-};
+}; 
+
+// ----------------------------------------------------------------------------------------------------------

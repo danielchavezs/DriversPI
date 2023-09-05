@@ -10,8 +10,6 @@ const createDriver = async (forename, surname, description, image, nationality, 
     },
   });
 
-  // console.log(newDVteams);
-
   if (!newDVteams.length){
     throw new Error ('There is no team listed within the database that matches the one(s) received.');
   }else{
@@ -24,6 +22,19 @@ const createDriver = async (forename, surname, description, image, nationality, 
 
 module.exports = { createDriver }
 
+// --------------------------------------------------------------------------------------------------
+
+// const existingDriver = await Driver.findOne({
+//   were: {
+//     forename,
+//     surname,
+//   },
+// NUEVO
+// // if (existingDriver) {
+// //   const error = new Error("The pilot already exists");
+// //   error.status = 409; // conflict
+// //   throw error;
+// // }
 
 // ---------------------------------------------------------------------------------------------------
 

@@ -1,0 +1,1 @@
+const LOADING_F1_GIF = "https://media.tenor.com/DNiqp3_an34AAAAC/f1-formule1.gif";

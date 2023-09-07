@@ -12,17 +12,35 @@ const getAPIdrivers = async () => {
   // FOR PARA OBJETOS
   for (const response of responses) {
     const drivers = response.data.map((driver) => {
-      return {
-        id: driver.id,
-        name: {
-            forename: driver.name.forename,
-            surname: driver.name.surname,
-        },
-        image: driver.image.url ? driver.image.url : DEFAULT_IMAGE,
-        dob: driver.dob,
-        nationality: driver.nationality,
-        teams: driver.teams,
-        description: driver.description,
+      // if propiedad teams y abajo el modelado final con el objeto
+      if(driver.teams){
+        const arrayTeams = driver.teams.split(",")
+        const trimmedTeams = arrayTeams.map((team) => team.trim());;
+        const modeledTeams = trimmedTeams.map((team) => ({
+          name: team,
+        }));
+        // console.log(modeledTeams);
+        return {
+          id: driver.id,
+          forename: driver.name.forename,
+          surname: driver.name.surname,
+          image: driver.image.url ? driver.image.url : DEFAULT_IMAGE,
+          dob: driver.dob,
+          nationality: driver.nationality,
+          teams: modeledTeams,
+          description: driver.description,
+        };
+      }else{  // -->     if (!driver.teams)
+        return {
+          id: driver.id,
+          forename: driver.name.forename,
+          surname: driver.name.surname,
+          image: driver.image.url ? driver.image.url : DEFAULT_IMAGE,
+          dob: driver.dob,
+          nationality: driver.nationality,
+          teams: driver.teams,
+          description: driver.description,
+        };
       };
     });
     apiDrivers.push(...drivers);

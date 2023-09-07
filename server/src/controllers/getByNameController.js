@@ -28,7 +28,7 @@ const getByName = async (originalName) => {
          },
     });
 
-    const apiFoundDrivers = apiDrivers.filter((driver) => driver.name.forename == driverName);
+    const apiFoundDrivers = apiDrivers.filter((driver) => driver.forename == driverName);
 
     const queryFoundDrivers = dbFoundDriver.concat(apiFoundDrivers);
     if (!queryFoundDrivers.length){

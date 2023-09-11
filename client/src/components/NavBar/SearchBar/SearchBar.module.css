@@ -1,0 +1,60 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .input {
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    width: 250px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(19, 2, 82);;
+    box-shadow: 0 0 10px rgb(247, 0, 0);
+    outline: none;
+  }
+  
+  .input::placeholder {
+    color: black;
+  }
+  
+  .input:focus {
+    box-shadow: aqua,
+  }
+  
+  /* Efecto neón */
+  .input:focus::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .button {
+    display: flex;
+    color: #120f23;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    height: 35px;
+    width: 180px;
+    font-size: 0.85rem;   
+    background-color: rgba(0, 255, 255, 0.836);
+    border-color: aqua;
+    /* box-shadow: 0 0 10px rgb(247, 0, 0); */
+  }
+
+  /* .button :hover{
+    color: #ff6b6b;
+  }; */
+  
+  /* .input:focus + .searchIcon {
+    color: #ff6b6b;
+  } */
+  
+  /* Icono de búsqueda */
+  /* .searchIcon {
+    color: #a6a6a6;
+    font-size: 1.2rem;
+    margin-left: -30px;
+  } */
+  

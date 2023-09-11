@@ -19,19 +19,19 @@ const getTeams = async ()=>{
   });
 
   const remodeledTeams = [...teamNamesSet].map((jsonString) => JSON.parse(jsonString));
-  console.log(remodeledTeams);
-
+  // console.log(remodeledTeams);
     try {
       const createdTeams = await Team.bulkCreate(remodeledTeams, {
         ignoreDuplicates: true,
       });
       console.log("The teams have been successfully added to the database.");
       // console.log(createdTeams);
-      return remodeledTeams;
+      return dbTeams;
     } catch (error) {
       console.error("Error creating teams:", error);
     }
-  }
+  };
+  return dbTeams;
 };
 
 module.exports = { getTeams };

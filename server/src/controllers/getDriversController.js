@@ -2,9 +2,43 @@ const axios = require('axios');
 require('dotenv').config();
 const { API_URL, DEFAULT_IMAGE } = process.env;
 const { Driver, Team } = require('../db.js');
+const { DESC, ASC } = require('../utils.js');
+const DISPLAYED_DRIVERS = 9;
 
-const getAPIdrivers = async () => {
-  const apiDrivers = []; 
+async function sortDrivers (foundDrivers, sort, page){  // { sort, page = 0 }, --> debería estar como parámetro para que opere la función, reibido como query desde el handler.
+  let totalPages = Math.ceil(foundDrivers.length / DISPLAYED_DRIVERS);
+
+  if (sort) {
+    let sortedDrivers = [...foundDrivers].sort((a, b) => {
+      if (a[sort.field] < b[sort.field]) {
+        return -1;
+      }
+      if (a[sort.field] > b[sort.field]) {
+        return 1;
+      }
+      return 0;
+    });
+    if (sort.direction === "DESC") {  // --> falta estandarizar con varibale
+      sortedDrivers = [...sortedDrivers].reverse();
+    }
+    foundDrivers = sortedDrivers;
+  }
+  
+  if (page === 0 || page) {
+    let paginatedDrivers = [...foundDrivers].slice(
+      page * DISPLAYED_DRIVERS,
+      page * DISPLAYED_DRIVERS + DISPLAYED_DRIVERS
+    );
+    foundDrivers = paginatedDrivers;
+  }
+  return {
+    foundDrivers,
+    totalPages,
+  };
+};
+
+const getAPIdrivers = async () => { //{ sort, page = 0 }
+  const apiDrivers = [];  // --> cambié de const a let para poder aplicar lógica de paginado
 
   const apiRequest = axios.get(API_URL);
   const responses = await Promise.all([apiRequest]);
@@ -44,11 +78,16 @@ const getAPIdrivers = async () => {
       };
     });
     apiDrivers.push(...drivers);
-  }
+  };
+  // if (sort){
+  //   let foundDrivers = apiDrivers;
+  //   const sortedDrivers = await sortDrivers(foundDrivers, sort, page);
+  //   return sortedDrivers;
+  // } else 
   return apiDrivers;
 };
 
-const getDBdrivers = async () => {
+const getDBdrivers = async () => { //{ sort, page = 0 }
   const dbDrivers = await Driver.findAll({
     include: {
       model: Team,
@@ -58,17 +97,65 @@ const getDBdrivers = async () => {
       },
     },
   });
+  // if (sort){
+  //   let foundDrivers = dbDrivers;
+  //   const sortedDrivers = await sortDrivers(foundDrivers, sort, page);
+  //   return sortedDrivers;
+  // } else 
   return dbDrivers;
 };
 
-const getDrivers = async () => {
+const getDrivers = async ({ sort, page = 0 }) => { // { sort, page = 0 }
+  // const apiReponse = await getAPIdrivers({ sort, page });
+  // const dbResponse = await getDBdrivers({ sort, page });
+  
+  // const apiDrivers = apiReponse.foundDrivers;
+  // const dbDrivers = dbResponse.foundDrivers;
+
   const apiDrivers = await getAPIdrivers();
   const dbDrivers = await getDBdrivers();
-
-  const allDrivers = apiDrivers.concat(dbDrivers);
-  return allDrivers;
-//   filter logic here
-
+  
+  let foundDrivers = apiDrivers.concat(dbDrivers); // cambio de const a let para manipular datos con la lógica del paginado.
+  
+  // if (sort) {
+      const sortedDrivers = await sortDrivers(foundDrivers, sort, page);
+      console.log(sort, page)
+      return sortedDrivers;
+    // } else 
+    // return foundDrivers;
 };
 
 module.exports = { getDrivers, getAPIdrivers, getDBdrivers };
+
+// ----------------------------------------------------------------------------------------------------------------------------
+// SORT LOGIC DENTRO DE CADA FUNCIÓN (GETDRIVERS EN ESTE CASO):
+//
+// let totalPages = Math.ceil(foundDrivers.length / DISPLAYED_DRIVERS);
+
+// if (sort) {
+//   let sortedDrivers = [...foundDrivers].sort((a, b) => {
+//     if (a[sort.field] < b[sort.field]) {
+//       return -1;
+//     }
+//     if (a[sort.field] > b[sort.field]) {
+//       return 1;
+//     }
+//     return 0;
+//   });
+//   if (sort.direction === DESC) {
+//     sortedDrivers = [...sortedDrivers].reverse();
+//   }
+//   foundDrivers = sortedDrivers;
+// }
+
+// if (page === 0 || page) {
+//   let paginatedDrivers = [...foundDrivers].slice(
+//     page * DISPLAYED_DRIVERS,
+//     page * DISPLAYED_DRIVERS + DISPLAYED_DRIVERS
+//   );
+//   foundDrivers = paginatedDrivers;
+// }
+// return {
+//   foundDrivers,
+//   totalPages,
+// };

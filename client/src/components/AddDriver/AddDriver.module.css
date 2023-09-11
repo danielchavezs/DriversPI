@@ -1,0 +1,61 @@
+/* CreateGameForm.module.css */
+
+.container {
+    background-image: url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExM212am16bnFkYjhodnNlcnNxdXhmMzZuNnljZmJ3Nmh6Znh6cGptMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zQZtOcubuZr3xm03C5/giphy.gif'); 
+    background-size: 100%;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 2rem;
+  }
+  
+  form {
+    background-color: rgba(224, 35, 124, 0.85);
+    border-radius: 8px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  h2 {
+    color: #663399; /* Color violeta */
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    color: #333; /* Color oscuro para los labels */
+    font-weight: bold;
+  }
+  
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  select {
+    height: 100px;
+  }
+  
+  button {
+    background-color: #ff4500; /* Color rojo */
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #ff6347; /* Color rojo más claro en el hover */
+  }
+  

@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color:rgba(127, 255, 212, 0.75);
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+.loading{
+    background-color: black;
+  }
+
+.image{
+  display: flex;
+  flex-wrap: wrap;
+  background-color: rgba(0, 255, 255, 0.75);
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+}

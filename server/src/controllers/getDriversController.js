@@ -5,7 +5,7 @@ const { Driver, Team } = require('../db.js');
 const { DESC, ASC } = require('../utils.js');
 const DISPLAYED_DRIVERS = 9;
 
-async function sortDrivers (foundDrivers, sort, page){  // { sort, page = 0 }, --> debería estar como parámetro para que opere la función, reibido como query desde el handler.
+function sortDrivers (foundDrivers, sort, page){  // { sort, page = 0 }, --> debería estar como parámetro para que opere la función, reibido como query desde el handler.
   let totalPages = Math.ceil(foundDrivers.length / DISPLAYED_DRIVERS);
 
   if (sort) {
@@ -118,7 +118,7 @@ const getDrivers = async ({ sort, page = 0 }) => { // { sort, page = 0 }
   let foundDrivers = apiDrivers.concat(dbDrivers); // cambio de const a let para manipular datos con la lógica del paginado.
   
   // if (sort) {
-      const sortedDrivers = await sortDrivers(foundDrivers, sort, page);
+      const sortedDrivers = sortDrivers(foundDrivers, sort, page);
       console.log(sort, page)
       return sortedDrivers;
     // } else 

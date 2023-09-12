@@ -11,20 +11,30 @@ export default function Home() {
   const [sort, setSort] = useState();
   const [page, setPage] = useState(0);
   const dispatch = useDispatch();
-  const { getByName, allDrivers, totalPages } = useSelector((state) => state); // BORRÉ EL GetByName
+  const { getByName, allDrivers, totalPages, apiDrivers, dbDrivers } = useSelector((state) => state); // BORRÉ EL GetByName
   let driversToShow = [];
 
   if (getByName.length) {
     driversToShow = [...getByName]
-  } else {
+  } if(apiDrivers.length){
+    driversToShow = [...apiDrivers]
+  } if(dbDrivers.length){
+    driversToShow = [...dbDrivers]
+  }else {
     driversToShow = [...allDrivers];
   }
 
   useEffect(() => {
-    if (!getByName.length) {
-      dispatch(getDrivers({ sort, page })); // dentro del getDrivers: { sort, page }
+    if (!getByName.length && !apiDrivers.length && !dbDrivers.length) {
+      dispatch(getDrivers({ sort, page })); 
     }
-  }, [sort, page, getByName]); //  sort, page, getByName   --> detrás del getByName en el array
+    if (!getByName.length && apiDrivers.length && !dbDrivers.length) {
+      dispatch(getAPIdrivers());  // espero poder ajustar esta parte en el back y agregar el sort y page acá 
+    }
+    if (!getByName.length && !apiDrivers.length && dbDrivers.length) {
+      dispatch(getDBdrivers());  // espero poder ajustar esta parte en el back y agregar el sort y page acá 
+    }
+  }, [sort, page, getByName, apiDrivers, dbDrivers]); 
 
   // console.log(driversToShow);
 
@@ -36,7 +46,7 @@ export default function Home() {
       <button className={styles.sortButton}
         onClick={() => {
           setSort({
-            field: 'name',
+            field: 'forename',
             direction: ASC,
           });
         }}
@@ -47,7 +57,7 @@ export default function Home() {
       <button className={styles.sortButton}
         onClick={() => {
           setSort({
-            field: 'name',
+            field: 'forename',
             direction: DESC,
           });
         }}

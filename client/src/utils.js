@@ -1,6 +1,7 @@
 export const BACKEND_URL = "http://localhost:3001"
 export const DESC = 'DESC';
 export const ASC = 'ASC';
+export const DEFAULT_IMAGE = 'https://www.carblogindia.com/wp-content/uploads/2022/11/2023-formula-1-teams-drivers.jpg'
 
 export const F1_GIFS = [
     "https://media.tenor.com/DNiqp3_an34AAAAC/f1-formule1.gif",

@@ -67,11 +67,11 @@ export default function rootReducer(state = initialGlobalState, action) {
         ...state,
         teams: action.payload,
       };
-    // case NEW_DRIVER:
-    //   return {
-    //     ...state,
-    //     newDriver: action.payload.createDriver,
-    //   };
+    case NEW_DRIVER:
+      return {
+        ...state,
+        newDriver: action.payload,
+      };
     case FILTER:
       return {
         ...state,

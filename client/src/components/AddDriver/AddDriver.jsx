@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createDriver } from "../../redux/actions/actions";
+import { createDriver, getTeams } from "../../redux/actions/actions";
 import styles from "./AddDriver.module.css";
+import { DEFAULT_IMAGE } from "../../utils";
 
 export default function AddDriver() {
   const dispatch = useDispatch();
@@ -15,6 +16,12 @@ export default function AddDriver() {
   const [description, setDescription] = useState("");
   const [selectedTeams, setSelectedTeams] = useState([]);
 
+  useEffect(() => {
+    dispatch(getTeams()); // nuevo y rompe
+  }, []);
+
+  // console.log("Equipos cargados:", teams);
+
   const handleTeamChange = (event) => {
     const selectedTeamsIDs = Array.from(
       event.target.selectedOptions,
@@ -22,7 +29,6 @@ export default function AddDriver() {
     );
     setSelectedTeams(selectedTeamsIDs);
   };
-  // console.log(teams);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,7 +36,7 @@ export default function AddDriver() {
     const newDriver = {
       forename,
       surname,
-      image,
+      image: image || DEFAULT_IMAGE,
       nationality,
       dob,
       description,
@@ -76,7 +82,7 @@ export default function AddDriver() {
               type="url"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              required
+              // required
             />
 
             <label htmlFor="nationality">Nationality:</label>

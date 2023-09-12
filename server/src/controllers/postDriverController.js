@@ -1,27 +1,32 @@
 const { Driver, Team } = require('../db.js');
 const { Op } = require('sequelize');
+require('dotenv').config();
+const { DEFAULT_IMAGE } = process.env;
 
 const createDriver = async (forename, surname, description, image, nationality, dob, teams) => {
-
-  const conditions = teams.map(team => ({ name: team }));
+  
   const newDVteams = await Team.findAll({
     where: {
-      [Op.or]: conditions, // Realiza una consulta OR entre las condiciones
+      name: teams.map(team => team)
     },
   });
-
+  
   if (!newDVteams.length){
     throw new Error ('There is no team listed within the database that matches the one(s) received.');
   }else{
-    const newDriver = await Driver.create({forename, surname, description, image, nationality, dob });
+    const newDriver = await Driver.create({forename, surname, description, image: image? image: DEFAULT_IMAGE, nationality, dob });  // : image? image: DEFAULT_IMAGE,
     await newDriver.addTeam(newDVteams);
-    // console.log(newDriver);
     return newDriver;
   }
 };    
 
 module.exports = { createDriver }
 
+// --------------------------------------------------------------------------------------------------
+// const conditions = teams.map(team => ({ name: team }));
+// where: {
+//   [Op.or]: conditions, // Realiza una consulta OR entre las condiciones
+// },
 // --------------------------------------------------------------------------------------------------
 
 // const existingDriver = await Driver.findOne({

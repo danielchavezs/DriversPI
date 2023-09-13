@@ -1,11 +1,10 @@
-/* Estilos para Nav.module.css */
 .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #120f23;
     padding: 10px 20px;
-    box-shadow: 0 0 10px rgba(59, 126, 214, 0.719);
+    box-shadow: 0 0 10px rgba(59, 126, 214, 0.72);
   }
   
   .container a {
@@ -23,4 +22,5 @@
   .searchBarContainer {
     display: flex;
     align-items: center;
+    margin-left: auto;
   }

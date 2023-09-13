@@ -33,7 +33,8 @@ export default function Home() {
     getTeamsList(setTeamList);
   }, []);
 
-  console.log(name);
+  // console.log(name);
+  
   return (
     <div className={styles.container}>
       <SearchBar handleSearch={(name) => setName(name)} />
@@ -42,7 +43,7 @@ export default function Home() {
           className={styles.sortButton}
           onClick={() => {
             setSort({
-              field: 'forename',
+              field: "forename",
               direction: ASC,
             });
           }}
@@ -54,7 +55,7 @@ export default function Home() {
           className={styles.sortButton}
           onClick={() => {
             setSort({
-              field: 'forename',
+              field: "forename",
               direction: DESC,
             });
           }}
@@ -70,27 +71,29 @@ export default function Home() {
         >
           <strong>Clear</strong>
         </button>
+
+        <div className={styles.select}>
+          <select
+            name="select"
+            className={styles.teamInput}
+            onChange={(e) => setSelectedTeam(e.target.value)}
+          >
+            {teamList.map((team) => (
+              <option value={team === "Select team" ? "" : team}>{team}</option>
+            ))}
+          </select>
+          <select
+            name="select"
+            className={styles.teamInput}
+            onChange={(e) => setSelectedOrigin(e.target.value)}
+          >
+            <option value={""}>Select origin</option>
+            <option value={"api"}>API</option>
+            <option value={"db"}>Database</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <select
-          name="select"
-          className={styles.teamInput}
-          onChange={(e) => setSelectedTeam(e.target.value)}
-        >
-          {teamList.map((team) => (
-            <option value={team === 'Select team' ? '' : team}>{team}</option>
-          ))}
-        </select>
-        <select
-          name="select"
-          className={styles.teamInput}
-          onChange={(e) => setSelectedOrigin(e.target.value)}
-        >
-          <option value={''}>Select origin</option>
-          <option value={'api'}>API</option>
-          <option value={'db'}>Database</option>
-        </select>
-      </div>
+
       <Cards drivers={allDrivers} />
       <div className={styles.pagesContainer}>
         {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -100,7 +103,7 @@ export default function Home() {
                 setPage(buttonPage - 1);
               }}
               className={`${styles.pageButton} ${
-                buttonPage - 1 === page ? styles.pageButtonSelected : ''
+                buttonPage - 1 === page ? styles.pageButtonSelected : ""
               }`}
             >
               {buttonPage}

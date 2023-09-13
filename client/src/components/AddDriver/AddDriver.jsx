@@ -164,8 +164,8 @@ export default function AddDriver() {
         <h2>CREATE A NEW DRIVER</h2>
       </div>
 
-      {success && <div className="success-form">{success}</div>} {/* Mostrar el mensaje de éxito */}
-      {error.error && <div className="error-form">{error.error}</div>} {/* Mostrar el mensaje de error */}
+      {success && <div className={styles.success}>{success}</div>} {/* Mostrar el mensaje de éxito */}
+      {error.error && <div className={styles.error}>{error.error}</div>} {/* Mostrar el mensaje de error */}
 
       <form onSubmit={submitHandler} className={styles.form}>
         <label>Forename:</label>

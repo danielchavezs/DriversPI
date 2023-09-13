@@ -19,7 +19,6 @@ import store from './redux/store';
 import Detail from './components/Detail/Detail';
 import AddDriver from './components/AddDriver/AddDriver';
 
-
 function App() {
   const [errorApi, setErrorApi] = useState(false);
   const [drivers, setDrivers] = useState([]);
@@ -40,31 +39,12 @@ function App() {
     }
     setIsLoading(false);
   };
-
-  const onSearch = async (searchedName) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(`${BACKEND_URL}/drivers?name=${searchedName}`);
-      if (response.data.length > 0) {
-        setErrorApi(false);
-        setDrivers(response.data);
-      } else {
-        setErrorApi(true);
-        setDrivers([]);
-      }
-    } catch (error) {
-      setErrorApi(true);
-      setDrivers([]);
-    }
-    setIsLoading(false);
-  };
-
   return (
     <React.StrictMode>
       <Provider store={store}>
         <Router>
           <div className="App">
-            <Nav onSearch={onSearch} />
+            <Nav />
             <Routes>
               <Route
                 path="/home"
@@ -79,7 +59,7 @@ function App() {
       </Provider>
     </React.StrictMode>
   );
-};
+}
 
 export default App;
 
@@ -87,7 +67,7 @@ export default App;
 
 // ORIGINAL RETURN:
 // return (
-  //   <>
+//   <>
 //     <div>
 //       <a href="https://vitejs.dev" target="_blank">
 //         <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -138,12 +118,11 @@ export default App;
 // function App() {
 //   const [count, setCount] = useState(0)
 
- 
 // return (
 //   <div id="app-container">
 //     <Router>
 //       <Routes>
-//         <Route path="/home" element={<Home />}/> 
+//         <Route path="/home" element={<Home />}/>
 //         <Route path="/" element={<Landing />}/>
 //       </Routes>
 //     </Router>

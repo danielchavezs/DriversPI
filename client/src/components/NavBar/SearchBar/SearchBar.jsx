@@ -1,16 +1,10 @@
-import React, { useState } from "react";
-import styles from "./SearchBar.module.css";
-import { useDispatch } from "react-redux";
-import { getByName } from "../../../redux/actions/actions";
+import React, { useState } from 'react';
+import styles from './SearchBar.module.css';
+import { useDispatch } from 'react-redux';
+import { getByName } from '../../../redux/actions/actions';
 
-
-export default function SearchBar() {
-  const dispatch = useDispatch();
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearch = () => {
-    dispatch(getByName(searchTerm));
-  };
+export default function SearchBar({ handleSearch }) {
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
     <div className={styles.container}>
@@ -20,8 +14,10 @@ export default function SearchBar() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button className={styles.button}
-       onClick={handleSearch}>
+      <button
+        className={styles.button}
+        onClick={() => handleSearch(searchTerm)}
+      >
         <strong>Search Pilot</strong>
       </button>
     </div>
@@ -30,9 +26,8 @@ export default function SearchBar() {
 
 // --------------------------------------------------------------------------------
 
-
 // export default function SearchBar(props) {
-  
+
 //   const [gameName, setGameName] = useState("");
 
 //   const handleChange = (event) => {

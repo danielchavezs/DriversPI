@@ -20,7 +20,7 @@ import {
 // const BACKEND_URL = 'http://localhost:3001';
 
 export const getDrivers = (args) => {
-  const { sort, page } = args || {};
+  const { sort, page, team, origin, name } = args || {};
   return async (dispatch) => {
     try {
       dispatch({ type: SET_LOADING_TRUE });
@@ -28,9 +28,11 @@ export const getDrivers = (args) => {
         params: {
           sort,
           page,
+          team,
+          origin,
+          name,
         },
       });
-      console.log(response.data.foundDrivers);
       dispatch({ type: GET_ALL_DRIVERS, payload: response.data }); // --> modificado soundDrivers
     } catch (error) {
       alert(error);
@@ -41,7 +43,7 @@ export const getDrivers = (args) => {
 };
 
 export const getAPIdrivers = (args) => {
-  const { sort, page } = args || {};  //  --> debería estar sin estas propiedades por ahora
+  const { sort, page } = args || {}; //  --> debería estar sin estas propiedades por ahora
   return async (dispatch) => {
     try {
       dispatch({ type: SET_LOADING_TRUE });
@@ -62,7 +64,7 @@ export const getAPIdrivers = (args) => {
 };
 
 export const getDBdrivers = (args) => {
-  const { sort, page } = args || {};  //  --> debería estar sin estas propiedades por ahora
+  const { sort, page } = args || {}; //  --> debería estar sin estas propiedades por ahora
   return async (dispatch) => {
     try {
       dispatch({ type: SET_LOADING_TRUE });
@@ -83,7 +85,6 @@ export const getDBdrivers = (args) => {
 };
 
 export const getByName = (name) => {
-  
   return async (dispatch) => {
     try {
       dispatch({ type: SET_LOADING_TRUE });
@@ -118,13 +119,11 @@ export const getTeams = () => {
     try {
       dispatch({ type: SET_LOADING_TRUE });
       const response = await axios.get(`${BACKEND_URL}/teams`);
-      console.log(response);
       dispatch({ type: GET_TEAMS, payload: response.data });
     } catch (error) {
       alert(error);
     } finally {
       dispatch({ type: SET_LOADING_FALSE });
-      //console.log(response);
     }
   };
 };
@@ -133,7 +132,10 @@ export const createDriver = (newDriver) => {
   return async (dispatch) => {
     try {
       dispatch({ type: SET_LOADING_TRUE });
-      const response = await axios.post(`${BACKEND_URL}/drivers/create`, newDriver);
+      const response = await axios.post(
+        `${BACKEND_URL}/drivers/create`,
+        newDriver
+      );
       console.log(response);
       dispatch({ type: NEW_DRIVER, payload: response.data });
     } catch (error) {

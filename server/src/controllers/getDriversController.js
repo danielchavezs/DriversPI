@@ -5,9 +5,10 @@ const { Driver, Team } = require('../db.js');
 const { DESC, ASC } = require('../utils.js');
 const DISPLAYED_DRIVERS = 9;
 
-function sortDrivers (foundDrivers, sort, page){  // { sort, page = 0 }, --> debería estar como parámetro para que opere la función, reibido como query desde el handler.
+function sortDrivers(foundDrivers, sort, page) {
+  // { sort, page = 0 }, --> debería estar como parámetro para que opere la función, reibido como query desde el handler.
   let totalPages = Math.ceil(foundDrivers.length / DISPLAYED_DRIVERS);
-
+  const finalPage = page > totalPages ? totalPages - 1 : page;
   if (sort) {
     let sortedDrivers = [...foundDrivers].sort((a, b) => {
       if (a[sort.field] < b[sort.field]) {
@@ -18,16 +19,17 @@ function sortDrivers (foundDrivers, sort, page){  // { sort, page = 0 }, --> deb
       }
       return 0;
     });
-    if (sort.direction === "DESC") {  // --> falta estandarizar con varibale
+    if (sort.direction === 'DESC') {
+      // --> falta estandarizar con varibale
       sortedDrivers = [...sortedDrivers].reverse();
     }
     foundDrivers = sortedDrivers;
   }
-  
-  if (page === 0 || page) {
+
+  if (finalPage === 0 || finalPage) {
     let paginatedDrivers = [...foundDrivers].slice(
-      page * DISPLAYED_DRIVERS,
-      page * DISPLAYED_DRIVERS + DISPLAYED_DRIVERS
+      finalPage * DISPLAYED_DRIVERS,
+      finalPage * DISPLAYED_DRIVERS + DISPLAYED_DRIVERS
     );
     foundDrivers = paginatedDrivers;
   }
@@ -35,10 +37,49 @@ function sortDrivers (foundDrivers, sort, page){  // { sort, page = 0 }, --> deb
     foundDrivers,
     totalPages,
   };
-};
+}
 
-const getAPIdrivers = async () => { //{ sort, page = 0 }
-  const apiDrivers = [];  // --> cambié de const a let para poder aplicar lógica de paginado
+function filterByTeam(drivers, team, origin) {
+  if (!team && !origin) {
+    return drivers;
+  }
+  const dirversObject = drivers.reduce(
+    (acc, { id, teams }) => ({
+      ...acc,
+      [id]: teams?.map(({ name }) => name) || [],
+    }),
+    {}
+  );
+  const filteredDrivers = drivers.filter(({ id, origin: driverOrigin }) => {
+    const teams = dirversObject[id];
+    if (team && origin) {
+      return teams.includes(team) && origin === driverOrigin;
+    }
+    if (!team && origin) {
+      return origin === driverOrigin;
+    }
+    if (team && !origin) {
+      return teams.includes(team);
+    }
+  });
+  return filteredDrivers;
+}
+
+function filterName(drivers, searchName) {
+  if (!searchName) {
+    return drivers;
+  }
+  const lowerSearchName = searchName.toLocaleLowerCase();
+  const filteredDrivers = drivers.filter(({ forename, surname }) => {
+    const fullName = `${forename} ${surname}`.toLocaleLowerCase();
+    return fullName.includes(lowerSearchName);
+  });
+  return filteredDrivers;
+}
+
+const getAPIdrivers = async () => {
+  //{ sort, page = 0 }
+  const apiDrivers = []; // --> cambié de const a let para poder aplicar lógica de paginado
 
   const apiRequest = axios.get(API_URL);
   const responses = await Promise.all([apiRequest]);
@@ -47,9 +88,9 @@ const getAPIdrivers = async () => { //{ sort, page = 0 }
   for (const response of responses) {
     const drivers = response.data.map((driver) => {
       // if propiedad teams y abajo el modelado final con el objeto
-      if(driver.teams){
-        const arrayTeams = driver.teams.split(",")
-        const trimmedTeams = arrayTeams.map((team) => team.trim());;
+      if (driver.teams) {
+        const arrayTeams = driver.teams.split(',');
+        const trimmedTeams = arrayTeams.map((team) => team.trim());
         const modeledTeams = trimmedTeams.map((team) => ({
           name: team,
         }));
@@ -63,8 +104,10 @@ const getAPIdrivers = async () => { //{ sort, page = 0 }
           nationality: driver.nationality,
           teams: modeledTeams,
           description: driver.description,
+          origin: 'api',
         };
-      }else{  // -->     if (!driver.teams)
+      } else {
+        // -->     if (!driver.teams)
         return {
           id: driver.id,
           forename: driver.name.forename,
@@ -74,20 +117,22 @@ const getAPIdrivers = async () => { //{ sort, page = 0 }
           nationality: driver.nationality,
           teams: driver.teams,
           description: driver.description,
+          origin: 'api',
         };
-      };
+      }
     });
     apiDrivers.push(...drivers);
-  };
+  }
   // if (sort){
   //   let foundDrivers = apiDrivers;
   //   const sortedDrivers = await sortDrivers(foundDrivers, sort, page);
   //   return sortedDrivers;
-  // } else 
+  // } else
   return apiDrivers;
 };
 
-const getDBdrivers = async () => { //{ sort, page = 0 }
+const getDBdrivers = async () => {
+  //{ sort, page = 0 }
   const dbDrivers = await Driver.findAll({
     include: {
       model: Team,
@@ -101,28 +146,28 @@ const getDBdrivers = async () => { //{ sort, page = 0 }
   //   let foundDrivers = dbDrivers;
   //   const sortedDrivers = await sortDrivers(foundDrivers, sort, page);
   //   return sortedDrivers;
-  // } else 
-  return dbDrivers;
+  // } else
+  return dbDrivers.map((driver) => ({ ...driver, origin: 'db' }));
 };
 
-const getDrivers = async ({ sort, page = 0 }) => { // { sort, page = 0 }
+const getDrivers = async ({ sort, page = 0, team = '', origin, name }) => {
+  // { sort, page = 0 }
   // const apiReponse = await getAPIdrivers({ sort, page });
   // const dbResponse = await getDBdrivers({ sort, page });
-  
+
   // const apiDrivers = apiReponse.foundDrivers;
   // const dbDrivers = dbResponse.foundDrivers;
-
   const apiDrivers = await getAPIdrivers();
   const dbDrivers = await getDBdrivers();
-  
+
   let foundDrivers = apiDrivers.concat(dbDrivers); // cambio de const a let para manipular datos con la lógica del paginado.
-  
-  // if (sort) {
-      const sortedDrivers = sortDrivers(foundDrivers, sort, page);
-      console.log(sort, page)
-      return sortedDrivers;
-    // } else 
-    // return foundDrivers;
+
+  foundDrivers = filterName(foundDrivers, name);
+  const filteredByTeamsDrivers = filterByTeam(foundDrivers, team, origin);
+  const sortedDrivers = sortDrivers(filteredByTeamsDrivers, sort, page);
+  return sortedDrivers;
+  // } else
+  // return foundDrivers;
 };
 
 module.exports = { getDrivers, getAPIdrivers, getDBdrivers };

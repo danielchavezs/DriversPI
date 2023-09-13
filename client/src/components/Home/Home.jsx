@@ -1,101 +1,120 @@
-import { Link } from 'react-router-dom';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import styles from './Home.module.css';
 import Cards from '../Cards/Cards.jsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDrivers, getAPIdrivers, getDBdrivers, getByID, getByName, getTeams, createDriver } from '../../redux/actions/actions';
-import { ASC, DESC } from '../../utils';
+import { getDrivers } from '../../redux/actions/actions';
+import { ASC, DESC, getTeamsList } from '../../utils';
+import SearchBar from '../NavBar/SearchBar/SearchBar';
 
 export default function Home() {
   const [sort, setSort] = useState();
   const [page, setPage] = useState(0);
-  const dispatch = useDispatch();
-  const { getByName, allDrivers, totalPages, apiDrivers, dbDrivers } = useSelector((state) => state); // BORRÉ EL GetByName
-  let driversToShow = [];
+  const [name, setName] = useState('');
+  const [teamList, setTeamList] = useState([]);
+  const [selectedTeam, setSelectedTeam] = useState('');
+  const [selectedOrigin, setSelectedOrigin] = useState('');
 
-  if (getByName.length) {
-    driversToShow = [...getByName]
-  } if(apiDrivers.length){
-    driversToShow = [...apiDrivers]
-  } if(dbDrivers.length){
-    driversToShow = [...dbDrivers]
-  }else {
-    driversToShow = [...allDrivers];
-  }
+  const dispatch = useDispatch();
+  const { totalPages, allDrivers } = useSelector((state) => state); // BORRÉ EL GetByName
 
   useEffect(() => {
-    if (!getByName.length && !apiDrivers.length && !dbDrivers.length) {
-      dispatch(getDrivers({ sort, page })); 
-    }
-    if (!getByName.length && apiDrivers.length && !dbDrivers.length) {
-      dispatch(getAPIdrivers());  // espero poder ajustar esta parte en el back y agregar el sort y page acá 
-    }
-    if (!getByName.length && !apiDrivers.length && dbDrivers.length) {
-      dispatch(getDBdrivers());  // espero poder ajustar esta parte en el back y agregar el sort y page acá 
-    }
-  }, [sort, page, getByName, apiDrivers, dbDrivers]); 
+    dispatch(
+      getDrivers({
+        sort,
+        page,
+        team: selectedTeam,
+        origin: selectedOrigin,
+        name,
+      })
+    );
+  }, [sort, page, selectedTeam, selectedOrigin, name]);
 
-  // console.log(driversToShow);
+  useEffect(() => {
+    getTeamsList(setTeamList);
+  }, []);
 
-
+  console.log(name);
   return (
     <div className={styles.container}>
+      <SearchBar handleSearch={(name) => setName(name)} />
       <div className={styles.sortContainer}>
-        
-      <button className={styles.sortButton}
-        onClick={() => {
-          setSort({
-            field: 'forename',
-            direction: ASC,
-          });
-        }}
-      >
-        <strong>Name Asc</strong>
-      </button>
-
-      <button className={styles.sortButton}
-        onClick={() => {
-          setSort({
-            field: 'forename',
-            direction: DESC,
-          });
-        }}
-      >
-        <strong>Name Desc</strong>
-      </button>
-
-      <button className={styles.sortButton}
-        onClick={() => {
-          setSort();
-        }}
-      >
-        <strong>Clear</strong>
-      </button>
-
-      </div>
-      <Cards drivers={driversToShow} />
-      <div className={styles.pagesContainer}>
-
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
         <button
+          className={styles.sortButton}
           onClick={() => {
-            setPage(page - 1);
+            setSort({
+              field: 'forename',
+              direction: ASC,
+            });
           }}
         >
-          {page}
+          <strong>Name Asc</strong>
         </button>
-      ))}
-      </div>
 
+        <button
+          className={styles.sortButton}
+          onClick={() => {
+            setSort({
+              field: 'forename',
+              direction: DESC,
+            });
+          }}
+        >
+          <strong>Name Desc</strong>
+        </button>
+
+        <button
+          className={styles.sortButton}
+          onClick={() => {
+            setSort();
+          }}
+        >
+          <strong>Clear</strong>
+        </button>
+      </div>
+      <div>
+        <select
+          name="select"
+          className={styles.teamInput}
+          onChange={(e) => setSelectedTeam(e.target.value)}
+        >
+          {teamList.map((team) => (
+            <option value={team === 'Select team' ? '' : team}>{team}</option>
+          ))}
+        </select>
+        <select
+          name="select"
+          className={styles.teamInput}
+          onChange={(e) => setSelectedOrigin(e.target.value)}
+        >
+          <option value={''}>Select origin</option>
+          <option value={'api'}>API</option>
+          <option value={'db'}>Database</option>
+        </select>
+      </div>
+      <Cards drivers={allDrivers} />
+      <div className={styles.pagesContainer}>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+          (buttonPage) => (
+            <button
+              onClick={() => {
+                setPage(buttonPage - 1);
+              }}
+              className={`${styles.pageButton} ${
+                buttonPage - 1 === page ? styles.pageButtonSelected : ''
+              }`}
+            >
+              {buttonPage}
+            </button>
+          )
+        )}
+      </div>
     </div>
   );
-};
-
+}
 
 // -------------------------------------------------------------------------------------------------
 
-// const { allDrivers, getByName, totalPages } = useSelector((state) => state); // He eliminado 
+// const { allDrivers, getByName, totalPages } = useSelector((state) => state); // He eliminado
 // let driversToShow = [];
 
 // if (getByName.length) {
